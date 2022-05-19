@@ -5,8 +5,8 @@ This code compiles annual environmental datasets from the [Canadian Urban Enviro
 - Air Quality
   - Nitrogen Dioxide (NO<sub>2</sub>)
   - Ozone (O<sub>3</sub>)
-  - Particulate Matter 2.5 micrometers and smaller (PM<sub>2.5</sub>)
-- Greeness
+  - Particulate Matter 2.5 micrometres and smaller (PM<sub>2.5</sub>)
+- Greenness
   - Landsat Normalized Difference Vegetation Index (NDVI)
 - Neighbourhood
   - Canadian Active Living Environments (Can-ALE)
