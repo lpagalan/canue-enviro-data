@@ -9,12 +9,12 @@ The script processes the following datasets:
   - [Ozone](Data/Air%20Quality/O3/CANUE_METADATA_O3CHG_A_YY.pdf) (O<sub>3</sub>)
   - [Particulate Matter 2.5 micrometres and smaller](Data/Air%20Quality/PM2.5/CANUE_METADATA_PM25DALC_A_YY.pdf) (PM<sub>2.5</sub>)
 - Greenness
-  - [Landsat Normalized Difference Vegetation Index](Data/Greenness/NDVI) (NDVI)
+  - [Landsat Normalized Difference Vegetation Index](Data/Greenness/NDVI/CANUE_METADATA_GRLAN_AMN_YY.pdf) (NDVI)
 - Neighbourhood
   - [Canadian Active Living Environments](Data/Neighbourhood/Can-ALE/CANUE_METADATA_ALE_A_YY.pdf) (Can-ALE)
   - [Canadian Marginalization Index](Data/Neighbourhood/CAN-Marg/CANUE_METADATA_CMG_A_YY.pdf) (CAN-Marg)
   - [Noise](Data/Neighbourhood/Noise/CANUE_METADATA_NHNSE_AVA_YY.pdf)
-  - [Proximity to Roads](Data/Neighbourhood/Roads)
+  - [Proximity to Roads](Data/Neighbourhood/Roads/CANUE_METADATA_DTR_A_YY.pdf)
   - [Proximity to Water Bodies](Data/Neighbourhood/Water%20Bodies/CANUE_METADATA_DTW_A_YY.pdf)
 - Weather
   - [Climate Metrics](Data/Weather/Climate/CANUE_METADATA_WTHNRC_A_YY.pdf)
