@@ -5,8 +5,8 @@ This script compiles annual environmental data from the [Canadian Urban Environm
 The script processes the following datasets:
 
 - Air Quality
-  - Nitrogen Dioxide (NO<sub>2</sub>)
-  - Ozone (O<sub>3</sub>)
+  - [Nitrogen Dioxide](https://github.com/lpagalan/canue-enviro-data/blob/main/Data/Air%20Quality/NO2/CANUE_METADATA_NO2LUR_A_YY.pdf) (NO<sub>2</sub>)
+  - [Ozone](https://github.com/lpagalan/canue-enviro-data/blob/main/Data/Air%20Quality/O3/CANUE_METADATA_O3CHG_A_YY.pdf) (O<sub>3</sub>)
   - Particulate Matter 2.5 micrometres and smaller (PM<sub>2.5</sub>)
 - Greenness
   - Landsat Normalized Difference Vegetation Index (NDVI)
