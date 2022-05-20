@@ -1,9 +1,9 @@
 
-# This code compiles annual environmental datasets from the Canadian Urban
-# Environmental Health Research Consortium (CANUE) for linkages to other
-# datasets. CANUE data are provided as annual CSV files, and this code merges
-# the annual datasets into one. The compiled dataset allows merging to other
-# datasets using 6-digit postal code and year as a merge key.
+# This code compiles annual environmental data from the Canadian Urban
+# Environmental Health Research Consortium (CANUE) and prepares them for
+# linkages to other datasets. CANUE data are provided as annual CSV files, and
+# this code merges the annual datasets into one. The compiled dataset allows
+# merging to other datasets using 6-digit postal code and year as a merge key.
 
 # Load libraries ----------------------------------------------------------
 
