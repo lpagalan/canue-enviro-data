@@ -146,7 +146,6 @@ compile_annual_files <-
     df_annual_datasets <- filter(df_annual_datasets,
                                  year >= min_year & year <= max_year)
 
-    # Load annual files into a list
 
     # Function loads an annual dataset, adds a column for the corresponding
     # year, and removes year suffixes in existing columns
@@ -165,6 +164,8 @@ compile_annual_files <-
       names(annual_file) <- col_names
       return(annual_file)
     }
+
+    # Process each annual file and then combine them into one
 
     compiled_annual_files <- map2(df_annual_datasets$file,
                                   df_annual_datasets$year,
