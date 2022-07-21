@@ -162,7 +162,9 @@ compile_annual_files <-
       # Remove two-digit year suffix from column names
 
       col_names <- names(annual_file) %>%
-        str_remove("\\d{2}")
+        str_remove("\\d{2}(?=_)") %>% # Remove YY from varYY_XX
+        str_remove("(?<!_)\\d{2}\\b") # Remove YY from postalcodeYY
+
       names(annual_file) <- col_names
       return(annual_file)
     }
