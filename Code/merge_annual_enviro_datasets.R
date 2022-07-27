@@ -246,6 +246,38 @@ if (process_ndvi) {
     write_csv(file.path(dir_output, "greenness_ndvi.csv"))
 }
 
+# Calculate 2012 values as average of 2011 and 2013
+
+if (process_ndvi & max_year >= 2012) {
+
+  # Read greenspace NDVI file
+
+  df_ndvi <- read_csv(file.path(dir_output, "greenness_ndvi.csv"),
+                      na = c("", "NA", "NULL", "null", "-9999", "-1111"))
+
+  # Calculate 2012 values as the average of 2011 and 2013
+
+  df_ndvi_2012 <- df_ndvi %>%
+    filter(year == "2011" | year == "2013") %>%
+    pivot_longer(cols = starts_with("grlan"), names_to = "var") %>%
+    pivot_wider(id_cols = c(postalcode, province, var), names_from = year) %>%
+    arrange(postalcode, var) %>%
+    mutate(`2012` = round((`2011` + `2013`) / 2, 2)) %>%
+    select(-c(`2011`, `2013`)) %>%
+    pivot_wider(id_cols     = c(postalcode, province),
+                names_from  = var,
+                values_from = `2012`) %>%
+    mutate(year = 2012)
+
+  # Add 2012 imputed values to NDVI data
+
+  df_ndvi <- bind_rows(df_ndvi, df_ndvi_2012)
+
+  # Save file
+
+  write_csv(df_ndvi, file.path(dir_output, "greenness_ndvi.csv"))
+}
+
 # Process Can-ALE ---------------------------------------------------------
 
 if (process_can_ale) {
