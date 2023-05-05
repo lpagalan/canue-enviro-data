@@ -31,7 +31,7 @@ process_water_balance <- TRUE
 # Set time range of interest ----------------------------------------------
 
 min_year <- 2000
-max_year <- 2012
+max_year <- 2017
 
 # Set input directories ---------------------------------------------------
 
@@ -41,9 +41,9 @@ max_year <- 2012
 
 # Air quality
 
-dir_no2  <- "Data/Air Quality/NO2/"
-dir_o3   <- "Data/Air Quality/O3/"
-dir_pm25 <- "Data/Air Quality/PM2.5/"
+dir_no2  <- "Data/Air Quality/NO2"
+dir_o3   <- "Data/Air Quality/O3"
+dir_pm25 <- "Data/Air Quality/PM2.5"
 
 # Greenness
 
@@ -51,16 +51,16 @@ dir_ndvi <- "Data/Greenness/NDVI/"
 
 # Neighbourhood
 
-dir_can_ale      <- "Data/Neighbourhood/Can-ALE/"
-dir_can_marg     <- "Data/Neighbourhood/CAN-Marg/"
-dir_noise        <- "Data/Neighbourhood/Noise/"
-dir_roads        <- "Data/Neighbourhood/Roads/"
-dir_water_bodies <- "Data/Neighbourhood/Water Bodies/"
+dir_can_ale      <- "Data/Neighbourhood/Can-ALE"
+dir_can_marg     <- "Data/Neighbourhood/CAN-Marg"
+dir_noise        <- "Data/Neighbourhood/Noise"
+dir_roads        <- "Data/Neighbourhood/Roads"
+dir_water_bodies <- "Data/Neighbourhood/Water Bodies"
 
 # Weather
 
-dir_climate       <- "Data/Weather/Climate/"
-dir_water_balance <- "Data/Weather/Water Balance/"
+dir_climate       <- "Data/Weather/Climate"
+dir_water_balance <- "Data/Weather/Water Balance"
 
 # Verify file name pattern ------------------------------------------------
 
@@ -92,20 +92,72 @@ file_name_pattern_water_bodies <- "dtw_a_\\d{2}.csv"
 file_name_pattern_climate       <- "wthnrc_a_\\d{2}.csv"
 file_name_pattern_water_balance <- "wbnrc_a_\\d{2}.csv"
 
+# Set null values to NA ---------------------------------------------------
+
+is_replace_null <- TRUE
+
+canue_null <- c("", "NA", "-9999", "null", "NULL", "-1111")
+
 # Set output directory ----------------------------------------------------
 
 # Edit dir_output path where compiled datasets will be exported. If the
 # directory does not exist, R will create a new folder.
 
-dir_output <- "Results/"
+dir_output <- "Results"
 
 if (!file.exists(dir_output)) {
   dir.create(file.path(dir_output))
 }
 
+# Set output filenames ----------------------------------------------------
+
+file_no2           <- "air_quality_no2.rds"
+file_o3            <- "air_quality_o3.rds"
+file_pm25          <- "air_quality_pm25.rds"
+file_ndvi          <- "greenness_ndvi.rds"
+file_can_ale       <- "neighbourhood_can_ale.rds"
+file_can_marg      <- "neighbourhood_can_marg.rds"
+file_noise         <- "neighbourhood_noise.rds"
+file_roads         <- "neighbourhood_roads.rds"
+file_water_bodies  <- "neighbourhood_water_bodies.rds"
+file_climate       <- "weather_climate.rds"
+file_water_balance <- "weather_water_balance.rds"
+
+# If files exists, choose to skip or override -----------------------------
+
+is_override_data <- TRUE
+
 # No user modifications are required below --------------------------------
 
 # Functions ---------------------------------------------------------------
+
+# Function checks output directory if processed files exists. If processed files
+# exists, the variable is_override_data determines whether to (a.)
+# process the data again and override existing files or (b.) skip and retain the
+# existing files, speeding up the script.
+
+override_check <- function(var_process, file_var) {
+  if (var_process) {
+    if (file.exists(file.path(dir_output, file_var))) {
+      if (!get("is_override_data", envir = globalenv())) {
+        var_process <- FALSE
+      }
+    }
+  }
+  return(var_process)
+}
+
+process_no2           <- override_check(process_no2,           file_no2)
+process_o3            <- override_check(process_o3,            file_o3)
+process_pm25          <- override_check(process_pm25,          file_pm25)
+process_ndvi          <- override_check(process_ndvi,          file_ndvi)
+process_can_ale       <- override_check(process_can_ale,       file_can_ale)
+process_can_marg      <- override_check(process_can_marg,      file_can_marg)
+process_noise         <- override_check(process_noise,         file_noise)
+process_roads         <- override_check(process_roads,         file_roads)
+process_water_bodies  <- override_check(process_water_bodies,  file_water_bodies)
+process_climate       <- override_check(process_climate,       file_climate)
+process_water_balance <- override_check(process_water_balance, file_water_balance)
 
 # Function automatically loads annual files located within a directory
 # containing CANUE environmental data. The function scans the directory for a
@@ -114,11 +166,10 @@ if (!file.exists(dir_output)) {
 # year suffix and instead given a new column containing the year of the
 # corresponding annual file. Annual files are then compiled into one file.
 
-compile_annual_files <-
-  function(dir_input,
-           file_name_pattern,
-           min_year,
-           max_year) {
+compile_annual_files <- function(dir_input,
+                                 file_name_pattern,
+                                 min_year,
+                                 max_year) {
 
     # Get list of annual datasets
 
@@ -152,12 +203,20 @@ compile_annual_files <-
     # Function loads an annual dataset, adds a column for the corresponding
     # year, and removes year suffixes in existing columns
 
-    process_annual_file <- function(dir_input, file, year) {
+    process_annual_file <- function(dir_input,
+                                    file,
+                                    year) {
 
-      # Load annual file and add column with corresponding year
+      # Load annual file, replace null, and add column with corresponding year
 
-      annual_file <- read_csv(file.path(dir_input, file)) %>%
-        mutate(year = year)
+      if (get("is_replace_null", envir = globalenv())) {
+        annual_file <- read_csv(file.path(dir_input, file),
+                                na = get("canue_null", envir = globalenv()))
+      } else {
+        annual_file <- read_csv(file.path(dir_input, file))
+      }
+
+      annual_file <- mutate(annual_file, year = year)
 
       # Remove two-digit year suffix from column names
 
@@ -201,7 +260,7 @@ if (process_no2) {
     min_year          = min_year,
     max_year          = max_year
   ) %>%
-    write_csv(file.path(dir_output, "air_quality_no2.csv"))
+    saveRDS(file.path(dir_output, file_no2))
 }
 
 # Process O3 --------------------------------------------------------------
@@ -213,7 +272,7 @@ if (process_o3) {
     min_year          = min_year,
     max_year          = max_year
   ) %>%
-    write_csv(file.path(dir_output, "air_quality_o3.csv"))
+    saveRDS(file.path(dir_output, file_o3))
 }
 
 # Process PM2.5 -----------------------------------------------------------
@@ -225,57 +284,19 @@ if (process_pm25) {
     min_year          = min_year,
     max_year          = max_year
   ) %>%
-    write_csv(file.path(dir_output, "air_quality_pm25.csv"))
+    saveRDS(file.path(dir_output, file_pm25))
 }
 
 # Process NDVI ------------------------------------------------------------
-
-# If NDVI data from 2012 are required, 2012 values need to be imputed using 2011
-# and 2013 observations. No data were available for 2012 due to decommissioning
-# of Landsat 5 in 2011 prior to the start of Landsat 8 in 2013. If time range of
-# interest goes up to 2012, data for 2013 is automatically included so 2012
-# values can be imputed using data from 2011 and 2013.
 
 if (process_ndvi) {
   compile_annual_files(
     dir_input         = dir_ndvi,
     file_name_pattern = file_name_pattern_ndvi,
     min_year          = min_year,
-    max_year          = if_else(max_year == 2012, 2013, max_year)
+    max_year          = max_year
   ) %>%
-    write_csv(file.path(dir_output, "greenness_ndvi.csv"))
-}
-
-# Calculate 2012 values as average of 2011 and 2013
-
-if (process_ndvi & max_year >= 2012) {
-
-  # Read greenspace NDVI file
-
-  df_ndvi <- read_csv(file.path(dir_output, "greenness_ndvi.csv"),
-                      na = c("", "NA", "NULL", "null", "-9999", "-1111"))
-
-  # Calculate 2012 values as the average of 2011 and 2013
-
-  df_ndvi_2012 <- df_ndvi %>%
-    filter(year == "2011" | year == "2013") %>%
-    pivot_longer(cols = starts_with("grlan"), names_to = "var") %>%
-    pivot_wider(id_cols = c(postalcode, province, var), names_from = year) %>%
-    arrange(postalcode, var) %>%
-    mutate(`2012` = round((`2011` + `2013`) / 2, 2)) %>%
-    select(-c(`2011`, `2013`)) %>%
-    pivot_wider(id_cols     = c(postalcode, province),
-                names_from  = var,
-                values_from = `2012`) %>%
-    mutate(year = 2012)
-
-  # Add 2012 imputed values to NDVI data
-
-  df_ndvi <- bind_rows(df_ndvi, df_ndvi_2012)
-
-  # Save file
-
-  write_csv(df_ndvi, file.path(dir_output, "greenness_ndvi.csv"))
+    saveRDS(file.path(dir_output, file_ndvi))
 }
 
 # Process Can-ALE ---------------------------------------------------------
@@ -287,7 +308,7 @@ if (process_can_ale) {
     min_year          = min_year,
     max_year          = max_year
   ) %>%
-    write_csv(file.path(dir_output, "neighbourhood_can_ale.csv"))
+    saveRDS(file.path(dir_output, file_can_ale))
 }
 
 # Process CAN-Marg --------------------------------------------------------
@@ -299,7 +320,7 @@ if (process_can_marg) {
     min_year          = min_year,
     max_year          = max_year
   ) %>%
-    write_csv(file.path(dir_output, "neighbourhood_can_marg.csv"))
+    saveRDS(file.path(dir_output, file_can_marg))
 }
 
 # Process Noise -----------------------------------------------------------
@@ -311,7 +332,7 @@ if (process_noise) {
     min_year          = min_year,
     max_year          = max_year
   ) %>%
-    write_csv(file.path(dir_output, "neighbourhood_noise.csv"))
+    saveRDS(file.path(dir_output, file_noise))
 }
 
 # Process Proximity to Roads ----------------------------------------------
@@ -323,7 +344,7 @@ if (process_roads) {
     min_year          = min_year,
     max_year          = max_year
   ) %>%
-    write_csv(file.path(dir_output, "neighbourhood_roads.csv"))
+    saveRDS(file.path(dir_output, file_roads))
 }
 
 # Process Proximity to Water Bodies ---------------------------------------
@@ -335,7 +356,7 @@ if (process_water_bodies) {
     min_year          = min_year,
     max_year          = max_year
   ) %>%
-    write_csv(file.path(dir_output, "neighbourhood_water_bodies.csv"))
+    saveRDS(file.path(dir_output, file_water_bodies))
 }
 
 # Process Climate ---------------------------------------------------------
@@ -347,7 +368,7 @@ if (process_climate) {
     min_year          = min_year,
     max_year          = max_year
   ) %>%
-    write_csv(file.path(dir_output, "weather_climate.csv"))
+    saveRDS(file.path(dir_output, file_climate))
 }
 
 # Process Water Balance ---------------------------------------------------
@@ -359,7 +380,7 @@ if (process_water_balance) {
     min_year          = min_year,
     max_year          = max_year
   ) %>%
-    write_csv(file.path(dir_output, "weather_water_balance.csv"))
+    saveRDS(file.path(dir_output, file_water_balance))
 }
 
 rm(list = ls())
