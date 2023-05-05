@@ -17,5 +17,5 @@ The script processes the following datasets:
   - [Proximity to Roads](Data/Neighbourhood/Roads/CANUE_METADATA_DTR_A_YY.pdf)
   - [Proximity to Water Bodies](Data/Neighbourhood/Water%20Bodies/CANUE_METADATA_DTW_A_YY.pdf)
 - Weather
-  - [Climate Metrics](Data/Weather/Climate/CANUE_METADATA_WTHNRC_A_YY.pdf)
+  - [Climate Metrics](Data/Weather/Climate/CANUE_METADATA_WTHNRC_A_YY%20-%2002.pdf)
   - [Water Balance Metrics](Data/Weather/Water%20Balance/CANUE_METADATA_WBNRC_A_YY.pdf)
